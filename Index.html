@@ -6,7 +6,7 @@
     <title>Nexus Editor</title>
     <meta name="theme-color" content="#1e293b">
     
-    <link rel="manifest" href="./manifest.json">
+    <link rel="manifest" href="manifest.json">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,7 +48,6 @@
     </style>
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body x-data="editorApp()" 
@@ -86,7 +85,7 @@
         </div>
 
         <div class="flex items-center gap-1 ml-2">
-            <button x-show="deferredPrompt || !isLocalFile" @click="installPWA" class="p-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors flex-none" aria-label="Instalar Aplicación" title="Instalar Aplicación">
+            <button x-show="deferredPrompt" @click="installPWA" class="p-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors flex-none" aria-label="Instalar Aplicación" title="Instalar Aplicación">
                 <i data-lucide="download-cloud" class="w-5 h-5"></i>
             </button>
             
@@ -160,11 +159,9 @@
                 content: '',
                 fileName: 'documento',
                 fileFormat: '.txt',
-                
                 extensions: ['.txt', '.md', '.html', '.css', '.js', '.json', '.csv', '.py', '.xml'],
                 isAddingExt: false,
                 newExtension: '',
-
                 deferredPrompt: null,
                 isLocalFile: window.location.protocol === 'file:',
                 
@@ -181,7 +178,12 @@
                         this.deferredPrompt = e;
                     });
 
-                    this.setupPWA();
+                    // Cambio: Registro del Service Worker físico
+                    if ('serviceWorker' in navigator && !this.isLocalFile) {
+                        navigator.serviceWorker.register('sw.js')
+                            .then(reg => console.log('Service Worker registrado'))
+                            .catch(err => console.warn('SW falló:', err));
+                    }
                 },
 
                 initIcons() {
@@ -340,22 +342,9 @@
                     }
                 },
 
-                setupPWA() {
-                    // Solo registra el Service Worker apuntando al archivo externo ./sw.js
-                    if ('serviceWorker' in navigator && !this.isLocalFile) {
-                        navigator.serviceWorker.register('./sw.js')
-                            .then((registration) => {
-                                console.log('Service Worker registrado correctamente en el scope:', registration.scope);
-                            })
-                            .catch((err) => {
-                                console.warn('Fallo al registrar el Service Worker:', err);
-                            });
-                    }
-                },
-
                 async installPWA() {
                     if (this.isLocalFile) {
-                        alert("Abre el archivo desde localhost (ej. 127.0.0.1:8000) para poder instalarla.");
+                        alert("Abre el sitio desde HTTPS para instalar.");
                         return;
                     }
                     if (this.deferredPrompt) {
@@ -365,7 +354,7 @@
                             this.deferredPrompt = null;
                         }
                     } else {
-                        alert("Por favor, usa el menú del navegador ('Añadir a la pantalla principal') para instalar la aplicación.");
+                        alert("Usa el menú del navegador para instalar.");
                     }
                 }
             }
