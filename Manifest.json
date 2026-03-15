@@ -1,16 +1,16 @@
 {
   "name": "Nexus Editor",
   "short_name": "Nexus",
-  "description": "Lector y editor de código fluido",
-  "start_url": "./index.html",
+  "description": "Lector y editor fluido",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0f172a",
-  "theme_color": "#2563eb",
+  "theme_color": "#1e293b",
   "icons": [
     {
-      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzI1NjNlYiI+PHBhdGggZD0iTTIgMmg0djIwSDJ6TTE4IDJoNHYyMGgtNHoiLz48L3N2Zz4=",
+      "src": "https://via.placeholder.com/512/2563eb/ffffff?text=N",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
