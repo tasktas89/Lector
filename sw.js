@@ -1,25 +1,25 @@
-const CACHE_NAME = 'nexus-editor-v1';
-const urlsToCache = [
-  './',
-  './index.html'
+const CACHE_NAME = 'nexus-cache-v1';
+const ASSETS = [
+  'index.html',
+  'manifest.json'
 ];
 
+// Instalación: Guardar en caché
 self.addEventListener('install', (e) => {
-    e.waitUntil(
-        caches.open(CACHE_NAME)
-        .then((cache) => cache.addAll(urlsToCache))
-    );
-    self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+  );
+  self.skipWaiting();
 });
 
+// Activación: Limpiar cachés antiguas
 self.addEventListener('activate', (e) => {
-    e.waitUntil(self.clients.claim());
+  e.waitUntil(self.clients.claim());
 });
 
+// Estrategia: Red primero, si falla, Caché
 self.addEventListener('fetch', (e) => {
-    e.respondWith(
-        caches.match(e.request).then((response) => {
-            return response || fetch(e.request);
-        })
-    );
+  e.respondWith(
+    fetch(e.request).catch(() => caches.match(e.request))
+  );
 });
